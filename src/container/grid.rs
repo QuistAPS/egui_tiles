@@ -305,6 +305,7 @@ impl Grid {
                     &response,
                     pointer.round_to_pixels(ui.pixels_per_point()).x - x,
                     i,
+                    tiles,
                 );
 
                 if resize_state != ResizeState::Idle {
@@ -349,6 +350,7 @@ impl Grid {
                     &response,
                     pointer.round_to_pixels(ui.pixels_per_point()).y - y,
                     i,
+                    tiles,
                 );
 
                 if resize_state != ResizeState::Idle {
@@ -405,6 +407,7 @@ fn resize_interaction<Pane>(
     splitter_response: &egui::Response,
     dx: f32,
     i: usize,
+    tiles: &Tiles<Pane>,
 ) -> ResizeState {
     assert_eq!(ranges.len(), shares.len(), "Bug in egui_tiles::Grid");
     let num = ranges.len();
@@ -414,7 +417,9 @@ fn resize_interaction<Pane>(
     let right = i + 1;
 
     if splitter_response.double_clicked() {
-        behavior.on_edit(EditAction::TileResized);
+        tiles
+            .tile_ids()
+            .for_each(|id| behavior.on_edit(EditAction::TileResized(id)));
 
         // double-click to center the split between left and right:
         let mean = 0.5 * (shares[left] + shares[right]);
@@ -422,7 +427,9 @@ fn resize_interaction<Pane>(
         shares[right] = mean;
         ResizeState::Hovering
     } else if splitter_response.dragged() {
-        behavior.on_edit(EditAction::TileResized);
+        tiles
+            .tile_ids()
+            .for_each(|id| behavior.on_edit(EditAction::TileResized(id)));
 
         if dx < 0.0 {
             // Expand right, shrink stuff to the left:

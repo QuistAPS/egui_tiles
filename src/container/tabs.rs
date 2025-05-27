@@ -158,7 +158,7 @@ impl Tabs {
         let prev_active = self.active;
         self.ensure_active(tiles);
         if prev_active != self.active {
-            behavior.on_edit(EditAction::TabSelected);
+            behavior.on_edit(EditAction::TabSelected(self.active));
         }
 
         let mut active_rect = rect;
@@ -277,7 +277,7 @@ impl Tabs {
                                 .on_hover_cursor(egui::CursorIcon::Grab)
                                 .drag_started()
                             {
-                                behavior.on_edit(EditAction::TileDragged);
+                                behavior.on_edit(EditAction::TileDragged(tile_id));
                                 ui.ctx().set_dragged_id(tile_id.egui_id(tree.id));
                             }
                         }
@@ -303,7 +303,7 @@ impl Tabs {
                                 behavior.tab_ui(&mut tree.tiles, ui, id, child_id, &tab_state);
 
                             if response.clicked() {
-                                behavior.on_edit(EditAction::TabSelected);
+                                behavior.on_edit(EditAction::TabSelected(Some(child_id)));
                                 next_active = Some(child_id);
                             }
 
@@ -312,7 +312,9 @@ impl Tabs {
                                     && response.rect.contains(mouse_pos)
                                 {
                                     // Expand this tab - maybe the user wants to drop something into it!
-                                    behavior.on_edit(EditAction::TabSelected);
+                                    behavior.on_edit(EditAction::TabSelected(
+                                        drop_context.dragged_tile_id,
+                                    ));
                                     next_active = Some(child_id);
                                 }
                             }

@@ -9,17 +9,17 @@ use super::{ResizeState, SimplificationOptions, Tile, TileId, Tiles, UiResponse}
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EditAction {
     /// A tile was resized by dragging or double-clicking a boundary.
-    TileResized,
+    TileResized(TileId),
 
     /// A drag with a tile started.
-    TileDragged,
+    TileDragged(TileId),
 
     /// A tile was dropped and its position changed accordingly.
-    TileDropped,
+    TileDropped(TileId),
 
     /// A tab was selected by a click, or by hovering a dragged tile over it,
     /// or there was no active tab and egui picked an arbitrary one.
-    TabSelected,
+    TabSelected(Option<TileId>),
 }
 
 /// The state of a tab, used to inform the rendering of the tab.

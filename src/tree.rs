@@ -472,7 +472,7 @@ impl<Pane> Tree<Pane> {
 
         if ui.input(|i| i.pointer.any_released()) {
             if let Some(insertion_point) = drop_context.best_insertion {
-                behavior.on_edit(EditAction::TileDropped);
+                behavior.on_edit(EditAction::TileDropped(dragged_tile_id));
                 self.move_tile(dragged_tile_id, insertion_point, false);
             }
             clear_smooth_preview_rect(ui.ctx(), dragged_tile_id);
